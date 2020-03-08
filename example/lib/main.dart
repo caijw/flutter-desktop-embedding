@@ -80,8 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: Theme.of(context).textTheme.display1,
               ),
             ],
-          )
-      ),
+          )),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
@@ -90,7 +89,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
 
 // Flutter code sample for Listener
 
@@ -133,6 +131,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _upCounter = 0;
   double x = 0.0;
   double y = 0.0;
+  bool _lights = false;
 
   void _incrementDown(PointerEvent details) {
     _updateLocation(details);
@@ -154,14 +153,18 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       y = details.position.dy;
     });
   }
-  bool outputPointerLog () {
+
+  bool outputPointerLog() {
     return false;
   }
+
   void onPointerCancel(PointerEvent details) {
     if (!outputPointerLog()) {
       return;
     }
-    print('onPointerCancel' + ' ' + (new DateTime.now().millisecondsSinceEpoch).toString());
+    print('onPointerCancel' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
     print(details);
   }
 
@@ -169,7 +172,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     if (!outputPointerLog()) {
       return;
     }
-    print('onPointerDown' + ' ' + (new DateTime.now().millisecondsSinceEpoch).toString());
+    print('onPointerDown' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
     print(details);
   }
 
@@ -177,7 +182,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     if (!outputPointerLog()) {
       return;
     }
-    print('onPointerEnter' + ' ' + (new DateTime.now().millisecondsSinceEpoch).toString());
+    print('onPointerEnter' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
     print(details);
   }
 
@@ -185,11 +192,13 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     if (!outputPointerLog()) {
       return;
     }
-    print('onPointerExit' + ' ' + (new DateTime.now().millisecondsSinceEpoch).toString());
+    print('onPointerExit' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
     print(details);
   }
 
-  void onPointerHover (PointerEvent details) {
+  void onPointerHover(PointerEvent details) {
     if (!outputPointerLog()) {
       return;
     }
@@ -197,27 +206,33 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
     // print(details);
   }
 
-  void onPointerMove (PointerEvent details) {
+  void onPointerMove(PointerEvent details) {
     if (!outputPointerLog()) {
       return;
     }
-    print('onPointerMove' + ' ' + (new DateTime.now().millisecondsSinceEpoch).toString());
+    print('onPointerMove' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
     print(details);
   }
 
-  void onPointerSignal (PointerEvent details) {
+  void onPointerSignal(PointerEvent details) {
     if (!outputPointerLog()) {
       return;
     }
-    print('onPointerSignal' + ' ' + (new DateTime.now().millisecondsSinceEpoch).toString());
+    print('onPointerSignal' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
     print(details);
   }
 
-  void onPointerUp (PointerEvent details) {
+  void onPointerUp(PointerEvent details) {
     if (!outputPointerLog()) {
       return;
     }
-    print('onPointerUp' + ' ' + (new DateTime.now().millisecondsSinceEpoch).toString());
+    print('onPointerUp' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
     print(details);
   }
 
@@ -225,32 +240,77 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints.tight(Size(1000.0, 800.0)),
-      child: Listener(
-        onPointerCancel: onPointerCancel,
-        onPointerDown: onPointerDown,
-        onPointerEnter: onPointerEnter,
-        onPointerExit: onPointerExit,
-        onPointerHover: onPointerHover,
-        onPointerMove: onPointerMove,
-        onPointerSignal: onPointerSignal,
-        onPointerUp: onPointerUp,
-        child: Container(
-          color: Colors.lightBlueAccent,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                  'You have pressed or released in this area this many times:'),
-              Text(
-                '$_downCounter presses\n$_upCounter releases',
-                style: Theme.of(context).textTheme.display1,
-              ),
-              Text(
-                'The cursor is here: (${x.toStringAsFixed(2)}, ${y.toStringAsFixed(2)})',
-              ),
-            ],
+      child: Column(
+        children: <Widget>[
+          Container(
+            alignment: FractionalOffset.center,
+            color: Colors.white,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.lightbulb_outline,
+                    color: _lights ? Colors.yellow.shade600 : Colors.black,
+                    size: 60,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _lights = !_lights;
+                    });
+                  },
+                  onScaleStart: (ScaleStartDetails details) {
+                    print('onScaleStart');
+                    print(details);
+                  },
+                  onScaleUpdate: (ScaleStartDetails details) {
+                    print('onScaleUpdate');
+                    print(details);
+                  },
+                  onScaleEnd: (ScaleStartDetails details) {
+                    print('onScaleEnd');
+                    print(details);
+                  },
+                  child: Container(
+                    color: Colors.yellow.shade600,
+                    padding: const EdgeInsets.all(8),
+                    child: const Text('TURN LIGHTS ON'),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+          Listener(
+            onPointerCancel: onPointerCancel,
+            onPointerDown: onPointerDown,
+            onPointerEnter: onPointerEnter,
+            onPointerExit: onPointerExit,
+            onPointerHover: onPointerHover,
+            onPointerMove: onPointerMove,
+            onPointerSignal: onPointerSignal,
+            onPointerUp: onPointerUp,
+            child: Container(
+              color: Colors.lightBlueAccent,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                      'You have pressed or released in this area this many times:'),
+                  Text(
+                    '$_downCounter presses\n$_upCounter releases',
+                    style: Theme.of(context).textTheme.display1,
+                  ),
+                  Text(
+                    'The cursor is here: (${x.toStringAsFixed(2)}, ${y.toStringAsFixed(2)})',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
