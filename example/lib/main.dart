@@ -258,21 +258,17 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    setState(() {
-                      _lights = !_lights;
-                    });
+                    print('onTap');
+                    // setState(() {
+                    //   _lights = !_lights;
+                    // });
                   },
                   onScaleStart: (ScaleStartDetails details) {
                     print('onScaleStart');
                     print(details);
                   },
-                  onScaleUpdate: (ScaleStartDetails details) {
-                    print('onScaleUpdate');
-                    print(details);
-                  },
-                  onScaleEnd: (ScaleStartDetails details) {
-                    print('onScaleEnd');
-                    print(details);
+                  onLongPress: () {
+                    print('onLongPress');
                   },
                   child: Container(
                     color: Colors.yellow.shade600,
