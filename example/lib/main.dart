@@ -1,229 +1,313 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// Copyright 2018 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class _GesturePainter extends CustomPainter {
-  const _GesturePainter({
-    this.zoom,
-    this.offset,
-    this.swatch,
-    this.forward,
-    this.scaleEnabled,
-    this.tapEnabled,
-    this.doubleTapEnabled,
-    this.longPressEnabled,
-  });
+void main() {
+  // See https://github.com/flutter/flutter/wiki/Desktop-shells#target-platform-override
+  if (!kIsWeb && (Platform.isLinux || Platform.isWindows)) {
+    debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  }
 
-  final double zoom;
-  final Offset offset;
-  final MaterialColor swatch;
-  final bool forward;
-  final bool scaleEnabled;
-  final bool tapEnabled;
-  final bool doubleTapEnabled;
-  final bool longPressEnabled;
+  runApp(new MyApp());
+}
 
+class MyApp1 extends StatelessWidget {
   @override
-  void paint(Canvas canvas, Size size) {
-    final Offset center = size.center(Offset.zero) * zoom + offset;
-    final double radius = size.width / 2.0 * zoom;
-    final Gradient gradient = RadialGradient(
-      colors: forward ? <Color>[swatch.shade50, swatch.shade900]
-                      : <Color>[swatch.shade900, swatch.shade50]
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        // See https://github.com/flutter/flutter/wiki/Desktop-shells#fonts
+        fontFamily: 'Roboto',
+      ),
+      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
-    final Paint paint = Paint()
-      ..shader = gradient.createShader(Rect.fromCircle(
-        center: center,
-        radius: radius,
-      ));
-    canvas.drawCircle(center, radius, paint);
-  }
-
-  @override
-  bool shouldRepaint(_GesturePainter oldPainter) {
-    return oldPainter.zoom != zoom
-        || oldPainter.offset != offset
-        || oldPainter.swatch != swatch
-        || oldPainter.forward != forward
-        || oldPainter.scaleEnabled != scaleEnabled
-        || oldPainter.tapEnabled != tapEnabled
-        || oldPainter.doubleTapEnabled != doubleTapEnabled
-        || oldPainter.longPressEnabled != longPressEnabled;
   }
 }
 
-class GestureDemo extends StatefulWidget {
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
   @override
-  GestureDemoState createState() => GestureDemoState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-class GestureDemoState extends State<GestureDemo> {
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
 
-  Offset _startingFocalPoint;
-
-  Offset _previousOffset;
-  Offset _offset = Offset.zero;
-
-  double _previousZoom;
-  double _zoom = 1.0;
-
-  static const List<MaterialColor> kSwatches = <MaterialColor>[
-    Colors.red,
-    Colors.pink,
-    Colors.purple,
-    Colors.deepPurple,
-    Colors.indigo,
-    Colors.blue,
-    Colors.lightBlue,
-    Colors.cyan,
-    Colors.green,
-    Colors.lightGreen,
-    Colors.lime,
-    Colors.yellow,
-    Colors.amber,
-    Colors.orange,
-    Colors.deepOrange,
-    Colors.brown,
-    Colors.grey,
-    Colors.blueGrey,
-  ];
-  int _swatchIndex = 0;
-  MaterialColor _swatch = kSwatches.first;
-  MaterialColor get swatch => _swatch;
-
-  bool _forward = true;
-  bool _scaleEnabled = true;
-  bool _tapEnabled = true;
-  bool _doubleTapEnabled = true;
-  bool _longPressEnabled = true;
-
-  void _handleScaleStart(ScaleStartDetails details) {
+  void _incrementCounter() {
     setState(() {
-      _startingFocalPoint = details.focalPoint;
-      _previousOffset = _offset;
-      _previousZoom = _zoom;
-    });
-  }
-
-  void _handleScaleUpdate(ScaleUpdateDetails details) {
-    setState(() {
-      _zoom = _previousZoom * details.scale;
-
-      // Ensure that item under the focal point stays in the same place despite zooming
-      final Offset normalizedOffset = (_startingFocalPoint - _previousOffset) / _previousZoom;
-      _offset = details.focalPoint - normalizedOffset * _zoom;
-    });
-  }
-
-  void _handleScaleReset() {
-    setState(() {
-      _zoom = 1.0;
-      _offset = Offset.zero;
-    });
-  }
-
-  void _handleColorChange() {
-    setState(() {
-      _swatchIndex += 1;
-      if (_swatchIndex == kSwatches.length)
-        _swatchIndex = 0;
-      _swatch = kSwatches[_swatchIndex];
-    });
-  }
-
-  void _handleDirectionChange() {
-    setState(() {
-      _forward = !_forward;
+      _counter++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: <Widget>[
-        GestureDetector(
-          onScaleStart: _scaleEnabled ? _handleScaleStart : null,
-          onScaleUpdate: _scaleEnabled ? _handleScaleUpdate : null,
-          onTap: _tapEnabled ? _handleColorChange : null,
-          onDoubleTap: _doubleTapEnabled ? _handleScaleReset : null,
-          onLongPress: _longPressEnabled ? _handleDirectionChange : null,
-          child: CustomPaint(
-            painter: _GesturePainter(
-              zoom: _zoom,
-              offset: _offset,
-              swatch: swatch,
-              forward: _forward,
-              scaleEnabled: _scaleEnabled,
-              tapEnabled: _tapEnabled,
-              doubleTapEnabled: _doubleTapEnabled,
-              longPressEnabled: _longPressEnabled,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 0.0,
-          left: 0.0,
-          child: Card(
-            child: Container(
-              padding: const EdgeInsets.all(4.0),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Checkbox(
-                        value: _scaleEnabled,
-                        onChanged: (bool value) { setState(() { _scaleEnabled = value; }); },
-                      ),
-                      const Text('Scale'),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Checkbox(
-                        value: _tapEnabled,
-                        onChanged: (bool value) { setState(() { _tapEnabled = value; }); },
-                      ),
-                      const Text('Tap'),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Checkbox(
-                        value: _doubleTapEnabled,
-                        onChanged: (bool value) { setState(() { _doubleTapEnabled = value; }); },
-                      ),
-                      const Text('Double Tap'),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Checkbox(
-                        value: _longPressEnabled,
-                        onChanged: (bool value) { setState(() { _longPressEnabled = value; }); },
-                      ),
-                      const Text('Long Press'),
-                    ],
-                  ),
-                ],
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: GestureDetector(
+          onTap: () {
+            print('onTap');
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'You have pushed the button this many times:',
               ),
-            ),
-          ),
-        ),
-      ],
+              Text(
+                '$_counter',
+                style: Theme.of(context).textTheme.display1,
+              ),
+            ],
+          )),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    theme: ThemeData.dark(),
-    home: Scaffold(
-      appBar: AppBar(title: const Text('Gestures Demo')),
-      body: GestureDemo(),
-    ),
-  ));
+// Flutter code sample for Listener
+
+// This example makes a [Container] react to being touched, showing a count of
+// the number of pointer downs and ups.
+
+// import 'package:flutter/material.dart';
+
+// import 'package:flutter/widgets.dart';
+
+// void main() => runApp(MyApp());
+
+/// This Widget is the main application widget.
+class MyApp extends StatelessWidget {
+  static const String _title = 'Flutter Code Sample';
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: _title,
+      home: Scaffold(
+        appBar: AppBar(title: const Text(_title)),
+        body: Center(
+          child: MyStatefulWidget(),
+        ),
+      ),
+    );
+  }
+}
+
+class MyStatefulWidget extends StatefulWidget {
+  MyStatefulWidget({Key key}) : super(key: key);
+
+  @override
+  _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
+}
+
+class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+  int _downCounter = 0;
+  int _upCounter = 0;
+  double x = 0.0;
+  double y = 0.0;
+  bool _lights = false;
+
+  void _incrementDown(PointerEvent details) {
+    _updateLocation(details);
+    setState(() {
+      _downCounter++;
+    });
+  }
+
+  void _incrementUp(PointerEvent details) {
+    _updateLocation(details);
+    setState(() {
+      _upCounter++;
+    });
+  }
+
+  void _updateLocation(PointerEvent details) {
+    setState(() {
+      x = details.position.dx;
+      y = details.position.dy;
+    });
+  }
+
+  bool outputPointerLog() {
+    return false;
+  }
+
+  void onPointerCancel(PointerEvent details) {
+    if (!outputPointerLog()) {
+      return;
+    }
+    print('onPointerCancel' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
+    print(details);
+  }
+
+  void onPointerDown(PointerEvent details) {
+    if (!outputPointerLog()) {
+      return;
+    }
+    print('onPointerDown' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
+    print(details);
+  }
+
+  void onPointerEnter(PointerEvent details) {
+    if (!outputPointerLog()) {
+      return;
+    }
+    print('onPointerEnter' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
+    print(details);
+  }
+
+  void onPointerExit(PointerEvent details) {
+    if (!outputPointerLog()) {
+      return;
+    }
+    print('onPointerExit' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
+    print(details);
+  }
+
+  void onPointerHover(PointerEvent details) {
+    if (!outputPointerLog()) {
+      return;
+    }
+    // print('onPointerHover' + ' ' + (new DateTime.now().millisecondsSinceEpoch).toString());
+    // print(details);
+  }
+
+  void onPointerMove(PointerEvent details) {
+    if (!outputPointerLog()) {
+      return;
+    }
+    print('onPointerMove' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
+    print(details);
+  }
+
+  void onPointerSignal(PointerEvent details) {
+    if (!outputPointerLog()) {
+      return;
+    }
+    print('onPointerSignal' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
+    print(details);
+  }
+
+  void onPointerUp(PointerEvent details) {
+    if (!outputPointerLog()) {
+      return;
+    }
+    print('onPointerUp' +
+        ' ' +
+        (new DateTime.now().millisecondsSinceEpoch).toString());
+    print(details);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints.tight(Size(1000.0, 800.0)),
+      child: Column(
+        children: <Widget>[
+          Container(
+            alignment: FractionalOffset.center,
+            color: Colors.white,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.lightbulb_outline,
+                    color: _lights ? Colors.yellow.shade600 : Colors.black,
+                    size: 60,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    print('onTap');
+                    // setState(() {
+                    //   _lights = !_lights;
+                    // });
+                  },
+                  onScaleStart: (ScaleStartDetails details) {
+                    print('onScaleStart');
+                    print(details);
+                  },
+                  onLongPress: () {
+                    print('onLongPress');
+                  },
+                  child: Container(
+                    color: Colors.yellow.shade600,
+                    padding: const EdgeInsets.all(8),
+                    child: const Text('TURN LIGHTS ON'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Listener(
+            onPointerCancel: onPointerCancel,
+            onPointerDown: onPointerDown,
+            onPointerEnter: onPointerEnter,
+            onPointerExit: onPointerExit,
+            onPointerHover: onPointerHover,
+            onPointerMove: onPointerMove,
+            onPointerSignal: onPointerSignal,
+            onPointerUp: onPointerUp,
+            child: Container(
+              color: Colors.lightBlueAccent,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                      'You have pressed or released in this area this many times:'),
+                  Text(
+                    '$_downCounter presses\n$_upCounter releases',
+                    style: Theme.of(context).textTheme.display1,
+                  ),
+                  Text(
+                    'The cursor is here: (${x.toStringAsFixed(2)}, ${y.toStringAsFixed(2)})',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
