@@ -1,40 +1,24 @@
-// Copyright 2018 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  // See https://github.com/flutter/flutter/wiki/Desktop-shells#target-platform-override
-  if (!kIsWeb && (Platform.isLinux || Platform.isWindows)) {
-    debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
-  }
+void main() => runApp(MyApp());
 
-  runApp(new MyApp());
-}
-
-class MyApp1 extends StatelessWidget {
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        // This is the theme of your application.
+        //
+        // Try running your application with "flutter run". You'll see the
+        // application has a blue toolbar. Then, without quitting the app, try
+        // changing the primarySwatch below to Colors.green and then invoke
+        // "hot reload" (press "r" in the console where you ran "flutter run",
+        // or simply save your changes to "hot reload" in a Flutter IDE).
+        // Notice that the counter didn't reset back to zero; the application
+        // is not restarted.
         primarySwatch: Colors.blue,
-        // See https://github.com/flutter/flutter/wiki/Desktop-shells#fonts
-        fontFamily: 'Roboto',
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -43,6 +27,15 @@ class MyApp1 extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
+
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
+
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked "final".
 
   final String title;
 
@@ -55,259 +48,64 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     setState(() {
+      // This call to setState tells the Flutter framework that something has
+      // changed in this State, which causes it to rerun the build method below
+      // so that the display can reflect the updated values. If we changed
+      // _counter without calling setState(), then the build method would not be
+      // called again, and so nothing would appear to happen.
       _counter++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    // This method is rerun every time setState is called, for instance as done
+    // by the _incrementCounter method above.
+    //
+    // The Flutter framework has been optimized to make rerunning build methods
+    // fast, so that you can just rebuild anything that needs updating rather
+    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: GestureDetector(
-          onTap: () {
-            print('onTap');
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'You have pushed the button this many times:',
-              ),
-              Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.display1,
-              ),
-            ],
-          )),
+      body: Center(
+        // Center is a layout widget. It takes a single child and positions it
+        // in the middle of the parent.
+        child: Column(
+          // Column is also a layout widget. It takes a list of children and
+          // arranges them vertically. By default, it sizes itself to fit its
+          // children horizontally, and tries to be as tall as its parent.
+          //
+          // Invoke "debug painting" (press "p" in the console, choose the
+          // "Toggle Debug Paint" action from the Flutter Inspector in Android
+          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+          // to see the wireframe for each widget.
+          //
+          // Column has various properties to control how it sizes itself and
+          // how it positions its children. Here we use mainAxisAlignment to
+          // center the children vertically; the main axis here is the vertical
+          // axis because Columns are vertical (the cross axis would be
+          // horizontal).
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'You have pushed the button this many times:',
+            ),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-// Flutter code sample for Listener
-
-// This example makes a [Container] react to being touched, showing a count of
-// the number of pointer downs and ups.
-
-// import 'package:flutter/material.dart';
-
-// import 'package:flutter/widgets.dart';
-
-// void main() => runApp(MyApp());
-
-/// This Widget is the main application widget.
-class MyApp extends StatelessWidget {
-  static const String _title = 'Flutter Code Sample';
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: _title,
-      home: Scaffold(
-        appBar: AppBar(title: const Text(_title)),
-        body: Center(
-          child: MyStatefulWidget(),
-        ),
-      ),
-    );
-  }
-}
-
-class MyStatefulWidget extends StatefulWidget {
-  MyStatefulWidget({Key key}) : super(key: key);
-
-  @override
-  _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
-}
-
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _downCounter = 0;
-  int _upCounter = 0;
-  double x = 0.0;
-  double y = 0.0;
-  bool _lights = false;
-
-  void _incrementDown(PointerEvent details) {
-    _updateLocation(details);
-    setState(() {
-      _downCounter++;
-    });
-  }
-
-  void _incrementUp(PointerEvent details) {
-    _updateLocation(details);
-    setState(() {
-      _upCounter++;
-    });
-  }
-
-  void _updateLocation(PointerEvent details) {
-    setState(() {
-      x = details.position.dx;
-      y = details.position.dy;
-    });
-  }
-
-  bool outputPointerLog() {
-    return false;
-  }
-
-  void onPointerCancel(PointerEvent details) {
-    if (!outputPointerLog()) {
-      return;
-    }
-    print('onPointerCancel' +
-        ' ' +
-        (new DateTime.now().millisecondsSinceEpoch).toString());
-    print(details);
-  }
-
-  void onPointerDown(PointerEvent details) {
-    if (!outputPointerLog()) {
-      return;
-    }
-    print('onPointerDown' +
-        ' ' +
-        (new DateTime.now().millisecondsSinceEpoch).toString());
-    print(details);
-  }
-
-  void onPointerEnter(PointerEvent details) {
-    if (!outputPointerLog()) {
-      return;
-    }
-    print('onPointerEnter' +
-        ' ' +
-        (new DateTime.now().millisecondsSinceEpoch).toString());
-    print(details);
-  }
-
-  void onPointerExit(PointerEvent details) {
-    if (!outputPointerLog()) {
-      return;
-    }
-    print('onPointerExit' +
-        ' ' +
-        (new DateTime.now().millisecondsSinceEpoch).toString());
-    print(details);
-  }
-
-  void onPointerHover(PointerEvent details) {
-    if (!outputPointerLog()) {
-      return;
-    }
-    // print('onPointerHover' + ' ' + (new DateTime.now().millisecondsSinceEpoch).toString());
-    // print(details);
-  }
-
-  void onPointerMove(PointerEvent details) {
-    if (!outputPointerLog()) {
-      return;
-    }
-    print('onPointerMove' +
-        ' ' +
-        (new DateTime.now().millisecondsSinceEpoch).toString());
-    print(details);
-  }
-
-  void onPointerSignal(PointerEvent details) {
-    if (!outputPointerLog()) {
-      return;
-    }
-    print('onPointerSignal' +
-        ' ' +
-        (new DateTime.now().millisecondsSinceEpoch).toString());
-    print(details);
-  }
-
-  void onPointerUp(PointerEvent details) {
-    if (!outputPointerLog()) {
-      return;
-    }
-    print('onPointerUp' +
-        ' ' +
-        (new DateTime.now().millisecondsSinceEpoch).toString());
-    print(details);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints.tight(Size(1000.0, 800.0)),
-      child: Column(
-        children: <Widget>[
-          Container(
-            alignment: FractionalOffset.center,
-            color: Colors.white,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.lightbulb_outline,
-                    color: _lights ? Colors.yellow.shade600 : Colors.black,
-                    size: 60,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    print('onTap');
-                    // setState(() {
-                    //   _lights = !_lights;
-                    // });
-                  },
-                  onScaleStart: (ScaleStartDetails details) {
-                    print('onScaleStart');
-                    print(details);
-                  },
-                  onLongPress: () {
-                    print('onLongPress');
-                  },
-                  child: Container(
-                    color: Colors.yellow.shade600,
-                    padding: const EdgeInsets.all(8),
-                    child: const Text('TURN LIGHTS ON'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Listener(
-            onPointerCancel: onPointerCancel,
-            onPointerDown: onPointerDown,
-            onPointerEnter: onPointerEnter,
-            onPointerExit: onPointerExit,
-            onPointerHover: onPointerHover,
-            onPointerMove: onPointerMove,
-            onPointerSignal: onPointerSignal,
-            onPointerUp: onPointerUp,
-            child: Container(
-              color: Colors.lightBlueAccent,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                      'You have pressed or released in this area this many times:'),
-                  Text(
-                    '$_downCounter presses\n$_upCounter releases',
-                    style: Theme.of(context).textTheme.display1,
-                  ),
-                  Text(
-                    'The cursor is here: (${x.toStringAsFixed(2)}, ${y.toStringAsFixed(2)})',
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
